@@ -46,6 +46,11 @@ TileView.prototype.focus = function () {
 };
 
 TileView.prototype.draw = function (tile) {
+  if (this.drawText(tile.char)) {
+    this.base_animate_el.beginElement();
+  }
+
+  /*
   if (tile.transitioned()) {
     if (tile.transitionTo(T_COMPLETE | T_END)) {
       this.base_animate_el.beginElement();
@@ -60,10 +65,15 @@ TileView.prototype.draw = function (tile) {
     this.setState('state--hint', tile.state & T_HINT);
     tile.prev_state = tile.state;
   }
+  */
 };
 
 TileView.prototype.drawText = function (char) {
-  this.text_el.textContent = char;
+  if (this.text_el.textContent !== char) {
+    this.text_el.textContent = char;
+    return true;
+  }
+  return false;
 };
 
 TileView.prototype.setState = function (class_name, is_active) {
@@ -500,7 +510,7 @@ function draw() {
   for (let i = 0; i < tile_views.length; ++i) {
     //const tile = tiles[i];
     const tile = tile_mgr.atIndex(i);
-    // tile_views[i].drawText(tile.char);
+    tile_views[i].draw(tile);
     //const tile_view = tile_view_map[tile.getKey(i)];
     // tile_view.draw(tile);
     //tile_view.drawText(tile.char);
