@@ -16,13 +16,17 @@ TileManager.prototype.randomizeTiles = function (list, n) {
 };
 
 TileManager.prototype.shuffle = function (game_level, answers) {
+  const min_len = 3;
   const curr = this.tiles.map((t) => t.char).join('');
   let iterations = 0;
   let max_iterations = 100;
   while (iterations < max_iterations) {
-    const randomized = this.randomizeTiles(this.tiles, game_level);
+    const randomized = this.randomizeTiles(this.tiles, game_level + min_len);
     const randomized_text = randomized.map((t) => t.char).join('');
-    if (randomized_text !== curr && answers.indexOf(randomized_text) === -1) {
+    if (
+      randomized_text !== curr &&
+      answers.indexOf(randomized_text.slice(0, game_level + min_len)) === -1
+    ) {
       this.tiles = randomized;
       break;
     }
@@ -54,6 +58,10 @@ TileManager.prototype.select = function (index) {
   this.tiles[index].select_index = this.nextSelectIndex();
 };
 
+TileManager.prototype.hint = function (index) {
+  this.tiles[index].is_hint = true;
+};
+
 TileManager.prototype.currentInput = function () {
   return this.tiles
     .filter(
@@ -68,14 +76,23 @@ TileManager.prototype.atIndex = function (index) {
   return this.tiles[index];
 };
 
-TileManager.prototype.currentTilesAsChars = function (game_level) {
+TileManager.prototype.getTileIndexFromChar = function (char, game_level) {
+  return this.getCurrentTiles(game_level).findIndex((x) => x.char === char);
+};
+
+TileManager.prototype.getCurrentTiles = function (game_level) {
   const min_len = 3;
   const ordered_tiles = this.tiles
     .slice(0)
     .sort((a, b) => a.original_index - b.original_index);
   const max_index = game_level + min_len;
+  return ordered_tiles.slice(0, max_index);
+};
+
+TileManager.prototype.currentTilesAsChars = function (game_level) {
+  const ordered_tiles = this.getCurrentTiles(game_level);
   let chars = '';
-  for (let i = 0; i < max_index; ++i) {
+  for (let i = 0; i < ordered_tiles.length; ++i) {
     chars += ordered_tiles[i].char;
   }
   return chars;
@@ -88,7 +105,7 @@ TileManager.prototype.nextSelectIndex = function () {
   );
 };
 
-TileManager.prototype.nextLetter = function (answers) {
+TileManager.prototype.nextChar = function (answers) {
   if (!Array.isArray(answers) || answers.length === 0) {
     throw new Error('Answers must be provided to find next letter');
   }
@@ -124,6 +141,7 @@ TileManager.prototype.nextLetter = function (answers) {
 function Tile(char, original_index) {
   this.char = char;
   this.original_index = original_index;
+  this.is_hint = false;
 }
 
 module.exports = {

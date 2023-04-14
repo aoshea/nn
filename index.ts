@@ -47,7 +47,6 @@ TileView.prototype.focus = function () {
 
 TileView.prototype.draw = function (tile, in_level) {
   if (in_level && this.drawText(tile.char)) {
-    console.log('draw text');
     this.setState('state--idle', true);
     this.text_mask_animate_el.beginElement();
     //this.base_animate_el.beginElement();
@@ -96,14 +95,19 @@ let touch = false;
 
 // loop
 let its = 0;
-const longest_char_set = window.ZZ_INFO.split(',')[0].split('|').pop();
-const tile_mgr = game.createTileMgr(game.createTiles(longest_char_set));
+const answer_list = window.ZZ_INFO.split(',')[1];
+const char_set = game.orderCharSet(
+  window.ZZ_INFO.split(',')[0]
+);
+console.log('char', char_set);
+const max_chars = char_set.length;
+const tile_mgr = game.createTileMgr(game.createTiles(char_set));
 const tile_views = createTileViewMap();
 tile_views.forEach((tile) => tile.addListeners(inputHandler));
 
 function createTileViewMap() {
   const views = [];
-  for (let i = 0; i < longest_char_set.length; ++i) {
+  for (let i = 0; i < max_chars; ++i) {
     views.push(new TileView(i));
   }
   return views;
@@ -125,7 +129,6 @@ input_view_animate.addEventListener(
 let t = 0;
 let game_level = 0;
 let hints = 3;
-let max_chars = 100;
 
 // statistics
 let streak = '0';
@@ -318,13 +321,16 @@ function handleClickStats() {
   toggleStats();
 }
 
-function handleShuffle() {}
+function handleShuffle() {
+  tile_mgr.shuffle(game_level, game.answersForLevel(answer_list, game_level));
+  const res = tile_mgr.currentTilesAsChars(game_level);
+  console.log(res);
+}
 
 function getCompleteCount() {
   const complete_count = 0; // tiles.reduce((count, tile) => {
   //return tile.state & T_COMPLETE ? count + 1 : count;
   // }, 0);
-  console.log('c', complete_count);
   return complete_count;
 }
 
@@ -364,18 +370,12 @@ function handleClick(target) {
   const tile_view = tile_views[index];
   console.log('index', index, tile_view);
   tile_view.focus();
-  /*
-  const tile = tiles[elementPosition];
-  const tile_view = tile_view_map[tile.getKey(elementPosition)];
-  tile_view.focus();
-
-  if (input_indices.indexOf(tile.index) === -1) {
-    addInput(tile.index);
+  const tile = tile_mgr.atIndex(index);
+  if (typeof tile.select_index === 'undefined' || tile.select_index === null) {
+    tile_mgr.select(index);
   }
-  */
+  console.log(tile_mgr.currentInput());
 }
-
-function addInput(char_index) {}
 
 function handleDelete() {}
 
@@ -507,9 +507,7 @@ function handleShare() {
 }
 
 function gameloop() {
-  if (++its < 2) {
-    window.requestAnimationFrame(gameloop);
-  }
+  window.requestAnimationFrame(gameloop);
   update();
   draw();
 }
@@ -543,5 +541,5 @@ function renderUI() {
 
 // update input element
 function renderInput() {
-  input_view.textContent = 'ge';
+  input_view.textContent = tile_mgr.currentInput();
 }
