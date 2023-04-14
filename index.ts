@@ -96,9 +96,7 @@ let touch = false;
 // loop
 let its = 0;
 const answer_list = window.ZZ_INFO.split(',')[1];
-const char_set = game.orderCharSet(
-  window.ZZ_INFO.split(',')[0]
-);
+const char_set = game.orderCharSet(window.ZZ_INFO.split(',')[0]);
 console.log('char', char_set);
 const max_chars = char_set.length;
 const tile_mgr = game.createTileMgr(game.createTiles(char_set));
@@ -173,16 +171,16 @@ function main() {
 
 function handleInputAnimateBeginEvent() {
   // disable all interaction
-  Object.values(tile_view_map).forEach((tile_view) => {
+  tile_views.forEach((tile_view) => {
     tile_view.removeListeners(inputHandler);
   });
   removeGameListeners();
 }
 
 function handleInputAnimateEndEvent() {
-  clearInput();
+  tile_mgr.clear();
   // enable all interaction
-  Object.values(tile_view_map).forEach((tile_view) => {
+  tile_views.forEach((tile_view) => {
     tile_view.addListeners(inputHandler);
   });
   addGameListeners();
@@ -377,15 +375,8 @@ function handleClick(target) {
   console.log(tile_mgr.currentInput());
 }
 
-function handleDelete() {}
-
-function getAvailableTileCount(list) {
-  return list.reduce((count, tile) => {
-    if (typeof tile.char !== 'undefined' && tile.char !== '') {
-      return count + 1;
-    }
-    return count;
-  }, 0);
+function handleDelete() {
+  tile_mgr.clearOne();
 }
 
 function showPlum(index) {
@@ -424,11 +415,26 @@ function advanceLevel() {
 }
 
 function handleEnter() {
+  const is_correct = game.compareAnswer(
+    tile_mgr.currentInput(),
+    answer_list,
+    game_level
+  );
+  if (is_correct) {
+    advanceLevel();
+    tile_mgr.clear();
+  } else {
+    input_view_animate.beginElement();
+  }
+  console.log('is_correct', is_correct);
+  /*
+
   const len = game_level + 3;
   const game_level_answers = answers.get(len);
   const input_value = getInputValue();
   if (game_level_answers.indexOf(input_value.toLowerCase()) !== -1) {
     advanceLevel();
+  tile_mgr.select(index);
     clearInput();
   } else {
     // the wrong answer
@@ -436,6 +442,7 @@ function handleEnter() {
     // prevent input until cleared
     input_view_animate.beginElement();
   }
+  */
 }
 
 function handleHint() {
