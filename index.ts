@@ -45,9 +45,12 @@ TileView.prototype.focus = function () {
   this.setState('state--focus', true);
 };
 
-TileView.prototype.draw = function (tile) {
-  if (this.drawText(tile.char)) {
-    this.base_animate_el.beginElement();
+TileView.prototype.draw = function (tile, in_level) {
+  if (in_level && this.drawText(tile.char)) {
+    console.log('draw text');
+    this.setState('state--idle', true);
+    this.text_mask_animate_el.beginElement();
+    //this.base_animate_el.beginElement();
   }
 
   /*
@@ -91,9 +94,12 @@ const game_no = window.ZZ_GAME_NO;
 
 let touch = false;
 
+// loop
+let its = 0;
 const longest_char_set = window.ZZ_INFO.split(',')[0].split('|').pop();
 const tile_mgr = game.createTileMgr(game.createTiles(longest_char_set));
 const tile_views = createTileViewMap();
+tile_views.forEach((tile) => tile.addListeners(inputHandler));
 
 function createTileViewMap() {
   const views = [];
@@ -354,7 +360,11 @@ function inputHandler(e) {
 }
 
 function handleClick(target) {
-  const elementPosition = parseInt(target.id.split('-')[1], 10);
+  const index = parseInt(target.id.split('-')[1], 10);
+  const tile_view = tile_views[index];
+  console.log('index', index, tile_view);
+  tile_view.focus();
+  /*
   const tile = tiles[elementPosition];
   const tile_view = tile_view_map[tile.getKey(elementPosition)];
   tile_view.focus();
@@ -362,6 +372,7 @@ function handleClick(target) {
   if (input_indices.indexOf(tile.index) === -1) {
     addInput(tile.index);
   }
+  */
 }
 
 function addInput(char_index) {}
@@ -495,9 +506,10 @@ function handleShare() {
   }
 }
 
-// loop
 function gameloop() {
-  window.requestAnimationFrame(gameloop);
+  if (++its < 2) {
+    window.requestAnimationFrame(gameloop);
+  }
   update();
   draw();
 }
@@ -507,10 +519,11 @@ function update() {}
 
 // draw game
 function draw() {
+  const min_len = 3;
   for (let i = 0; i < tile_views.length; ++i) {
     //const tile = tiles[i];
     const tile = tile_mgr.atIndex(i);
-    tile_views[i].draw(tile);
+    tile_views[i].draw(tile, i < game_level + min_len);
     //const tile_view = tile_view_map[tile.getKey(i)];
     // tile_view.draw(tile);
     //tile_view.drawText(tile.char);
