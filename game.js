@@ -138,10 +138,15 @@ TileManager.prototype.nextChar = function (answers) {
   return next_letter;
 };
 
+TileManager.prototype.complete = function (game_level) {
+  this.getCurrentTiles(game_level).forEach((tile) => (tile.is_complete = true));
+};
+
 function Tile(char, original_index) {
   this.char = char;
   this.original_index = original_index;
   this.is_hint = false;
+  this.is_complete = false;
 }
 
 module.exports = {

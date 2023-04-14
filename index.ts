@@ -160,9 +160,6 @@ function main() {
   setLayoutHeight();
   addGlobalListeners();
   addGameListeners();
-
-  // tile_view_map = initTileViews(inputHandler);
-
   updateStats();
 
   // start tick
@@ -392,24 +389,30 @@ function advanceLevel() {
   showPlum(game_level);
 
   if (game_level < max_chars - 3) {
+    tile_mgr.complete(game_level);
+    /*
     for (let i = 0; i < tiles.length; ++i) {
       if (tiles[i].state & (T_IDLE | T_USE)) {
         tiles[i].complete();
       }
     }
+    */
     ++game_level;
+    /*
     const tile = tiles[game_level + 2];
     const tile_char = getChar(tile.index);
     if (tile_char) {
       tile.show(tile_char);
     }
+    */
   } else {
+    /*
     for (let i = 0; i < tiles.length; ++i) {
       if (tiles[i].state & (T_IDLE | T_USE | T_COMPLETE)) {
         tiles[i].end();
       }
     }
-
+    */
     setTimeout(toggleStats, 3000);
   }
 }
@@ -426,23 +429,6 @@ function handleEnter() {
   } else {
     input_view_animate.beginElement();
   }
-  console.log('is_correct', is_correct);
-  /*
-
-  const len = game_level + 3;
-  const game_level_answers = answers.get(len);
-  const input_value = getInputValue();
-  if (game_level_answers.indexOf(input_value.toLowerCase()) !== -1) {
-    advanceLevel();
-  tile_mgr.select(index);
-    clearInput();
-  } else {
-    // the wrong answer
-    // shake input and clear input on animate end
-    // prevent input until cleared
-    input_view_animate.beginElement();
-  }
-  */
 }
 
 function handleHint() {
