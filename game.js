@@ -138,6 +138,7 @@ TileManager.prototype.nextChar = function (answers) {
   return next_letter;
 };
 
+/** TODO: add */
 TileManager.prototype.complete = function (game_level) {
   this.getCurrentTiles(game_level).forEach((tile) => (tile.is_complete = true));
 };
@@ -146,8 +147,13 @@ function Tile(char, original_index) {
   this.char = char;
   this.original_index = original_index;
   this.is_hint = false;
-  this.is_complete = false;
+  this.is_complete = false; /** TODO: Add */
 }
+
+/* TODO: add */
+Tile.prototype.transitioned = function () {
+  this.state !== this.prev_state;
+};
 
 module.exports = {
   createTiles,
