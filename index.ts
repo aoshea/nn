@@ -3,6 +3,34 @@ import './style.css';
 
 import game = require('./game.js');
 
+function InputView() {
+  this.root_el = document.querySelector('g#input-view');
+  this.text_group_el = this.root_el
+    .querySelector('g#input-char')
+    .cloneNode(true);
+  this.char_width = this.root_el.getBBox().width;
+  console.log(this.char_width);
+  this.root_el.replaceChildren();
+}
+
+InputView.prototype.reset = function (chars) {
+  const cx = 50;
+  const c = Math.floor(chars / 2);
+  console.log('eh?', chars % 2);
+  const offset = chars % 2 === 0 ? 5 : 0;
+  for (let i = 0; i < chars; ++i) {
+    const char_el = this.text_group_el.cloneNode(true);
+    const x = i - c;
+    const xp = cx - x * this.char_width - offset;
+
+    console.log(i, x, xp);
+
+    char_el.id = `char-${i}`;
+    char_el.setAttribute('transform', `translate(${xp}, 0)`);
+    this.root_el.appendChild(char_el);
+  }
+};
+
 function TileView(position) {
   this.timeout = null;
   this.position = position;
@@ -137,6 +165,10 @@ let current_streak = `Current ${streak}`;
 let all_time_streak = `All-time ${best_streak}`;
 let total_played = '0';
 let game_result = `Zigga ${game_no} ${today_score}\n`;
+
+// input char display
+const input_char_view = new InputView();
+input_char_view.reset(game_level + 5);
 
 // plums
 const plumtexts = [
