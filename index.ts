@@ -9,25 +9,38 @@ function InputView() {
     .querySelector('g#input-char')
     .cloneNode(true);
   this.char_width = this.root_el.getBBox().width;
-  console.log(this.char_width);
-  this.root_el.replaceChildren();
+  this.char_value_els = [];
+
+  this.last_input = null;
 }
 
 InputView.prototype.reset = function (chars) {
+  this.root_el.replaceChildren();
   const cx = 50;
   const c = Math.floor(chars / 2);
-  console.log('eh?', chars % 2);
   const offset = chars % 2 === 0 ? 5 : 0;
+  this.char_value_els = [];
   for (let i = 0; i < chars; ++i) {
     const char_el = this.text_group_el.cloneNode(true);
-    const x = i - c;
-    const xp = cx - x * this.char_width - offset;
-
-    console.log(i, x, xp);
-
+    const index = chars - 1 - i - c;
+    const x = cx - (index * this.char_width - offset);
     char_el.id = `char-${i}`;
-    char_el.setAttribute('transform', `translate(${xp}, 0)`);
+    char_el.setAttribute('transform', `translate(${x}, 0)`);
+    this.char_value_els[i] = char_el.querySelector('tspan');
     this.root_el.appendChild(char_el);
+  }
+};
+
+InputView.prototype.render = function (input) {
+  if (input === this.last_input) {
+    return;
+  }
+  this.last_input = input;
+  const chars = input.split('');
+  for (let i = 0; i < this.char_value_els.length; ++i) {
+    const el = this.char_value_els[i];
+    el.textContent = i > chars.length ? '' : chars[i];
+    console.log(i, i > chars.length, chars[i], el);
   }
 };
 
@@ -154,6 +167,7 @@ input_view_animate.addEventListener(
 
 let t = 0;
 let game_level = 0;
+let min_chars = 3;
 let hints = 3;
 
 // statistics
@@ -168,7 +182,7 @@ let game_result = `Zigga ${game_no} ${today_score}\n`;
 
 // input char display
 const input_char_view = new InputView();
-input_char_view.reset(game_level + 5);
+input_char_view.reset(game_level + min_chars);
 
 // plums
 const plumtexts = [
@@ -430,6 +444,7 @@ function advanceLevel() {
     }
     */
     ++game_level;
+    input_char_view.reset(game_level + min_chars);
     /*
     const tile = tiles[game_level + 2];
     const tile_char = getChar(tile.index);
@@ -567,4 +582,5 @@ function renderUI() {
 // update input element
 function renderInput() {
   input_view.textContent = tile_mgr.currentInput();
+  input_char_view.render(tile_mgr.currentInput());
 }
