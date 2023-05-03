@@ -66,6 +66,10 @@ button.modal {
   padding: 0.25rem 0.5rem;
 }
 
+.typo--h1 {
+  font-size: 24px;
+}
+
 .typo--h1 span {
   color: orange;
 }
