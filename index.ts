@@ -93,6 +93,15 @@ TileView.prototype.draw = function (tile, in_level) {
     //this.base_animate_el.beginElement();
   }
 
+  if (tile.transitioned()) {
+    console.log('transition!');
+    if (tile.transitionTo(game.T_STATES.T_COMPLETE | game.T_STATES.T_END)) {
+      console.log('transitioned to T_COMPETE');
+      this.base_animate_el.beginElement();
+    }
+    tile.endTransition();
+  }
+
   /*
   if (tile.transitioned()) {
     if (tile.transitionTo(T_COMPLETE | T_END)) {
@@ -183,6 +192,9 @@ let game_result = `Zigga ${game_no} ${today_score}\n`;
 // input char display
 const input_char_view = new InputView();
 input_char_view.reset(game_level + min_chars);
+
+// set idle state on tiles
+tile_mgr.show(game_level);
 
 // plums
 const plumtexts = [

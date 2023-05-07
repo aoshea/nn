@@ -140,20 +140,77 @@ TileManager.prototype.nextChar = function (answers) {
 
 /** TODO: add */
 TileManager.prototype.complete = function (game_level) {
-  this.getCurrentTiles(game_level).forEach((tile) => (tile.is_complete = true));
+  this.getCurrentTiles(game_level).forEach((tile) => tile.complete());
+};
+
+TileManager.prototype.show = function (game_level) {
+  this.getCurrentTiles(game_level).forEach((tile) => tile.show());
+};
+
+/**
+ * Tile class
+ */
+const T_EMPTY = 1 << 0;
+const T_IDLE = 1 << 1;
+const T_USE = 1 << 2;
+const T_COMPLETE = 1 << 3;
+const T_HINT = 1 << 4;
+const T_END = 1 << 5;
+const T_SHUFFLE = 1 << 6;
+
+const T_STATES = {
+  T_EMPTY,
+  T_IDLE,
+  T_USE,
+  T_COMPLETE,
+  T_HINT,
+  T_END,
+  T_SHUFFLE,
 };
 
 function Tile(char, original_index) {
   this.char = char;
   this.original_index = original_index;
   this.is_hint = false;
-  this.is_complete = false; /** TODO: Add */
+  this.state = T_EMPTY;
+  this.prev_state = this.state;
 }
 
-/* TODO: add */
+Tile.prototype.updateState = function (newState) {
+  this.prev_state = this.state;
+  this.state = newState;
+};
+
+Tile.prototype.transitionedTo = function (newState) {
+  const inPrevState = this.prev_state & newState;
+  const inState = this.state & newState;
+  return inState && !inPrevState;
+};
+
 Tile.prototype.transitioned = function () {
   this.state !== this.prev_state;
 };
+
+Tile.prototype.endTransition = function () {
+  this.prev_state = this.state;
+};
+
+Tile.prototype.show = function () {
+  let newState = this.state | T_IDLE; // add idle state
+  newState = newState & ~T_EMPTY; // remove empty state
+  this.updateState(newState);
+  console.log('t', this.char, ' show', this.state);
+};
+
+Tile.prototype.complete = function () {
+  let newState = this.state | T_COMPLETE; // add state
+  newState = newState & ~T_IDLE; // remove idle state
+  this.updateState(newState);
+};
+
+/**
+ * End Tile class
+ */
 
 module.exports = {
   createTiles,
@@ -161,6 +218,7 @@ module.exports = {
   orderCharSet,
   compareAnswer,
   answersForLevel,
+  T_STATES,
 };
 
 function answersForLevel(answer_list, game_level) {
