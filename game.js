@@ -138,7 +138,6 @@ TileManager.prototype.nextChar = function (answers) {
   return next_letter;
 };
 
-/** TODO: add */
 TileManager.prototype.complete = function (game_level) {
   this.getCurrentTiles(game_level).forEach((tile) => tile.complete());
 };
@@ -196,10 +195,11 @@ Tile.prototype.endTransition = function () {
 };
 
 Tile.prototype.show = function () {
-  let newState = this.state | T_IDLE; // add idle state
-  newState = newState & ~T_EMPTY; // remove empty state
-  this.updateState(newState);
-  console.log('t', this.char, ' show', this.state);
+  if (this.state & T_EMPTY) {
+    let newState = this.state | T_IDLE; // add idle state
+    newState = newState & ~T_EMPTY; // remove empty state
+    this.updateState(newState);
+  }
 };
 
 Tile.prototype.complete = function () {

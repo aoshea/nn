@@ -25,7 +25,7 @@ InputView.prototype.reset = function (chars) {
   for (let i = 0; i < chars; ++i) {
     const char_el = this.text_group_el.cloneNode(true);
     const index = chars - 1 - i - c;
-    const x = cx - (index * this.char_width - offset);
+    const x = cx - (index * this.char_width + offset);
     char_el.id = `char-${i}`;
     char_el.setAttribute('transform', `translate(${x}, 0)`);
     this.char_value_els[i] = char_el.querySelector('tspan');
@@ -89,20 +89,16 @@ TileView.prototype.focus = function () {
 };
 
 TileView.prototype.draw = function (tile, in_level) {
-  if (in_level && this.drawText(tile.char)) {
-    this.setState('state--idle', true);
-    this.text_mask_animate_el.beginElement();
-    //this.base_animate_el.beginElement();
-  }
-
-  if (in_level) {
-    console.log('in_level', tile.state, tile.prev_state);
-  }
-
   if (in_level && tile.transitioned()) {
-    console.log('transition!');
+    // initial drawing of char
+    if (tile.transitionedTo(game.T_STATES.T_IDLE)) {
+      this.drawText(tile.char);
+      this.setState('state--idle', true);
+      this.text_mask_animate_el.beginElement();
+    }
+
+    // word completed with char
     if (tile.transitionedTo(game.T_STATES.T_COMPLETE | game.T_STATES.T_END)) {
-      console.log('transitioned to T_COMPETE');
       this.base_animate_el.beginElement();
     }
     tile.endTransition();
@@ -462,6 +458,7 @@ function advanceLevel() {
     }
     */
     ++game_level;
+    tile_mgr.show(game_level);
     input_char_view.reset(game_level + min_chars);
     /*
     const tile = tiles[game_level + 2];
