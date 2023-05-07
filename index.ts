@@ -295,7 +295,15 @@ function buildGameResult(game_no, complete_count, max_chars = 8) {
 }
 
 function updateStats() {
-  const complete_count = getCompleteCount();
+  const complete_count = tile_mgr.getCompleteCount();
+
+  const el = document.querySelector('.result-today');
+  const score_el = el.querySelector('span + span');
+  const percent_el = el.querySelector('span + span + span');
+  score_el.textContent = `${complete_count}/${max_chars}`;
+  percent_el.textContent = `${complete_count/max_chars*100}%`;
+
+  /*
 
   document.querySelector('#game-no > span').textContent = `Game ${game_no}`;
   today_score = `Result ${complete_count}/${max_chars}`;
@@ -321,6 +329,7 @@ function updateStats() {
     complete_count,
     max_chars
   );
+  */
 }
 
 function addGlobalListeners() {
@@ -385,13 +394,6 @@ function handleShuffle() {
   tile_mgr.shuffle(game_level, game.answersForLevel(answer_list, game_level));
   const res = tile_mgr.currentTilesAsChars(game_level);
   console.log(res);
-}
-
-function getCompleteCount() {
-  const complete_count = 0; // tiles.reduce((count, tile) => {
-  //return tile.state & T_COMPLETE ? count + 1 : count;
-  // }, 0);
-  return complete_count;
 }
 
 function initTileViews(handler) {

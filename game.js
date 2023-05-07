@@ -146,6 +146,15 @@ TileManager.prototype.show = function (game_level) {
   this.getCurrentTiles(game_level).forEach((tile) => tile.show());
 };
 
+TileManager.prototype.getCompleteCount = function () {
+  return this.tiles.reduce((count, tile) => {
+    if (tile.isComplete()) {
+      return count + 1;
+    }
+    return count;
+  }, 0);
+}
+
 /**
  * Tile class
  */
@@ -173,6 +182,10 @@ function Tile(char, original_index) {
   this.is_hint = false;
   this.state = T_EMPTY;
   this.prev_state = this.state;
+}
+
+Tile.prototype.isComplete = function () {
+  return this.state & T_COMPLETE;
 }
 
 Tile.prototype.updateState = function (newState) {
