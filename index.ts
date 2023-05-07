@@ -7,17 +7,24 @@ let tt = 0;
 
 function InputView() {
   this.root_el = document.querySelector('g#input-view');
-  this.text_group_el = this.root_el
-    .querySelector('g#input-char')
-    .cloneNode(true);
+  const input_char_el = this.root_el.querySelector('g#input-char');
+  this.text_group_el = input_char_el.cloneNode(true);
   this.char_width = this.root_el.getBBox().width;
   this.char_value_els = [];
+  this.to_remove = [input_char_el];
 
   this.last_input = null;
 }
 
+InputView.prototype.clearPrevious = function () {
+  let el;
+  while ((el = this.to_remove.pop())) {
+    this.root_el.removeChild(el);
+  }
+};
+
 InputView.prototype.reset = function (chars) {
-  this.root_el.replaceChildren();
+  this.clearPrevious();
   const cx = 50;
   const c = Math.floor(chars / 2);
   const offset = chars % 2 === 0 ? 5 : 0;
@@ -30,6 +37,7 @@ InputView.prototype.reset = function (chars) {
     char_el.setAttribute('transform', `translate(${x}, 0)`);
     this.char_value_els[i] = char_el.querySelector('tspan');
     this.root_el.appendChild(char_el);
+    this.to_remove.push(char_el);
   }
 };
 
@@ -42,7 +50,6 @@ InputView.prototype.render = function (input) {
   for (let i = 0; i < this.char_value_els.length; ++i) {
     const el = this.char_value_els[i];
     el.textContent = i > chars.length ? '' : chars[i];
-    console.log(i, i > chars.length, chars[i], el);
   }
 };
 
@@ -149,7 +156,6 @@ let touch = false;
 let its = 0;
 const answer_list = window.ZZ_INFO.split(',')[1];
 const char_set = game.orderCharSet(window.ZZ_INFO.split(',')[0]);
-console.log('char', char_set);
 const max_chars = char_set.length;
 const tile_mgr = game.createTileMgr(game.createTiles(char_set));
 const tile_views = createTileViewMap();
@@ -163,7 +169,6 @@ function createTileViewMap() {
   return views;
 }
 
-const input_view = document.querySelector('#text-input tspan');
 const input_view_animate = document.querySelector('#text-input-animate');
 input_view_animate.addEventListener(
   'beginEvent',
@@ -565,8 +570,7 @@ function gameloop() {
   window.requestAnimationFrame(gameloop);
 
   ++tt;
-  if (tt % 111 === 0) {
-    console.log('draw___');
+  if (tt % 5 === 0) {
     update();
     draw();
   }
@@ -601,6 +605,5 @@ function renderUI() {
 
 // update input element
 function renderInput() {
-  input_view.textContent = tile_mgr.currentInput();
   input_char_view.render(tile_mgr.currentInput());
 }

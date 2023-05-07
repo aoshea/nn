@@ -15,7 +15,7 @@
   <article>
     <div class="svg-container">
       <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-        <g id="input-view" transform="translate(0, 5)">
+        <g x="0" id="input-view" transform="translate(0, 15)">
           <g id="input-char">
             <text
               alignment-baseline="middle"
@@ -29,6 +29,25 @@
             <line x1="-5" y1="5" x2="5" y2="5" stroke="white" />
             <line x1="-4" y1="5" x2="4" y2="5" stroke="black" />
           </g>
+          <animateTransform
+            id="text-input-animate"
+            attributeName="transform"
+            attributeType="XML"
+            type="translate"
+            from="0 15"
+            to="0 15"
+            fill="freeze"
+            dur="1s"
+            values="0 15;-3 15;3 15;-2 15;2 15;0 15;0 15"
+            keySplines="
+      0.33 0.12 0.64 0.94;
+      0.33 0.12 0.64 0.94;
+      0.33 0.12 0.64 0.94;
+      0.33 0.12 0.64 0.94;
+      0.33 0.12 0.64 0.94;
+      0.33 0.12 0.64 0.94"
+            calcMode="spline"
+          />
         </g>
         <g transform="translate(50, 5)">
           <text
@@ -36,20 +55,20 @@
             alignment-baseline="middle"
             dominant-baseline="central"
             text-anchor="middle"
-            x="-100"
+            x="0"
             y="0"
             opacity="0"
           >
             <tspan>NICE</tspan>
             <animate
               id="plum-animate"
-              attributeName="x"
-              from="-100"
-              to="100"
+              attributeName="y"
+              from="10"
+              to="0"
               begin="indefinite"
               fill="freeze"
               dur="3s"
-              values="-100;0;0;0;100"
+              values="10;0;0;0;-10"
               keySplines="
             0.1 0.8 0.2 1;
             0.1 0.8 0.2 1;
@@ -88,36 +107,6 @@
             0.1 0.8 0.2 1;
             0.4 0.8 0.2 1;
             0.9 0.3 0.8 1"
-              calcMode="spline"
-            />
-          </text>
-        </g>
-        <g transform="translate(50, 15)">
-          <text
-            id="text-input"
-            alignment-baseline="middle"
-            dominant-baseline="central"
-            text-anchor="middle"
-            x="0"
-            y="1"
-          >
-            <tspan>INPUT</tspan>
-            <animate
-              id="text-input-animate"
-              attributeName="x"
-              from="0"
-              to="0"
-              begin="indefinite"
-              fill="freeze"
-              dur="1s"
-              values="0;-3;3;-2;2;0;0"
-              keySplines="
-              0.33 0.12 0.64 0.94;
-              0.33 0.12 0.64 0.94;
-              0.33 0.12 0.64 0.94;
-              0.33 0.12 0.64 0.94;
-              0.33 0.12 0.64 0.94;
-              0.33 0.12 0.64 0.94"
               calcMode="spline"
             />
           </text>
