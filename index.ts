@@ -169,45 +169,64 @@ function createTileViewMap() {
   return views;
 }
 
-function getStoredGame() {
-  const game_key = `game-${window.ZZ_GAME_NO}`;
+function getStorageData() {
+  const gameKey = `game-${window.ZZ_GAME_NO}`;
   const item = window.localStorage.getItem('z-words');
   if (item === null || typeof item === 'undefined') {
-    const game_info = {
-      [game_key]: {
+    const data = {
+      [gameKey]: {
         level: 0,
         hints: 3,
         words: [],
-      }
-    }
-    window.localStorage.setItem('z-words', JSON.stringify(game_info));
-    return game_info;
+        tiles: [],
+      },
+      streak: 0,
+      all_time_streak: 0,
+    };
+    window.localStorage.setItem('z-words', JSON.stringify(data));
+    return data;
   } else {
     return JSON.parse(item);
   }
 }
 
-function saveStoredGame(item) {
-  window.localStorage.setItem('z-words', JSON.stringify(item));
+function saveStorageData(data) {
+  window.localStorage.setItem('z-words', JSON.stringify(data));
 }
 
-function updateStorage(prop, value) {
-  const game_key = `game-${window.ZZ_GAME_NO}`;
-  const stored_game = getStoredGame();
-  const updated_game = {
-    ...stored_game,
-    [game_key]: {
-      ...stored_game[game_key],
-      [prop]: value
+function fromGlobalStorage(prop, def_value) {
+  const data = getStorageData();
+  return data[prop] ?? def_value;
+}
+
+function updateGlobalStorage(prop, value) {
+  const data = getStorageData();
+  data[prop] = value;
+  saveStorageData(data);
+}
+
+function updateGameStorage(prop, value) {
+  const gameKey = `game-${window.ZZ_GAME_NO}`;
+  const data = getStorageData();
+  const game = data[gameKey];
+  const newData = {
+    ...data,
+    [gameKey]: {
+      ...game[gameKey],
+      [prop]: value,
     },
   };
-  saveStoredGame(updated_game);
+  saveStorageData(newData);
 }
 
-function fromStorage(prop, def_value) {
-  const game_key = `game-${window.ZZ_GAME_NO}`;
-  const stored_game = getStoredGame();
-  const game = stored_game[game_key];
+function fromGameStorage(prop, def_value) {
+  const gameKey = `game-${window.ZZ_GAME_NO}`;
+  const data = getStorageData();
+  const game = data[gameKey];
+  if (game === null ?? typeof game === 'undefined') {
+    console.error('No storage for this game id', gameKey);
+    return def_value;
+  }
   return game[prop] ?? def_value;
 }
 
@@ -227,14 +246,14 @@ let t = 0;
 let min_chars = 3;
 
 // game level saved in storage
-let game_level = fromStorage('level', 0);
+let game_level = fromGameStorage('level', 0);
 
 // hints saved in storage
-let hints = fromStorage('hints', 3);
+let hints = fromGameStorage('hints', 3);
 
 // statistics
-let streak = fromStorage('streak', 0);
-let best_streak = fromStorage('xstreak', 0);
+let streak = fromGlobalStorage('streak', 0);
+let best_streak = fromGlobalStorage('all_time_streak', 0);
 let today_score = '3/8';
 let today_hints = `${hints}/3`;
 let current_streak = `Current ${streak}`;
@@ -347,7 +366,7 @@ function updateStats() {
   const score_el = el.querySelector('span + span');
   const percent_el = el.querySelector('span + span + span');
   score_el.textContent = `${complete_count}/${max_chars}`;
-  percent_el.textContent = `${complete_count/max_chars*100}%`;
+  percent_el.textContent = `${(complete_count / max_chars) * 100}%`;
 
   /*
 

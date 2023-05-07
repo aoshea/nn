@@ -153,7 +153,11 @@ TileManager.prototype.getCompleteCount = function () {
     }
     return count;
   }, 0);
-}
+};
+
+TileManager.prototype.serializeStates = function () {
+  return this.tiles.map((tile) => [tile.char, tile.original_index, tile.state]);
+};
 
 /**
  * Tile class
@@ -181,7 +185,7 @@ function Tile(char, original_index) {
   this.original_index = original_index;
   this.is_hint = false;
   this.state = T_EMPTY;
-  this.prev_state = this.state;
+  this.prevState = this.state;
 }
 
 Tile.prototype.isComplete = function () {
@@ -189,27 +193,28 @@ Tile.prototype.isComplete = function () {
 };
 
 Tile.prototype.updateState = function (newState) {
-  this.prev_state = this.state;
+  this.prevState = this.state;
   this.state = newState;
 };
 
 Tile.prototype.transitionedTo = function (newState) {
-  const inPrevState = this.prev_state & newState;
+  const inPrevState = this.prevState & newState;
   const inState = this.state & newState;
   return inState && !inPrevState;
 };
 
 Tile.prototype.transitioned = function () {
-  return this.state !== this.prev_state;
+  return this.state !== this.prevState;
 };
 
 Tile.prototype.endTransition = function () {
-  this.prev_state = this.state;
+  this.prevState = this.state;
 };
 
-Tile.prototype.show = function () {
+Tile.prototype.show = function (savedState) {
   if (this.state & T_EMPTY) {
-    let newState = this.state | T_IDLE; // add idle state
+    const addState = savedState ? savedState : T_IDLE;
+    let newState = this.state | addState; // add idle state
     newState = newState & ~T_EMPTY; // remove empty state
     this.updateState(newState);
   }
