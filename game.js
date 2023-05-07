@@ -188,7 +188,7 @@ Tile.prototype.transitionedTo = function (newState) {
 };
 
 Tile.prototype.transitioned = function () {
-  this.state !== this.prev_state;
+  return this.state !== this.prev_state;
 };
 
 Tile.prototype.endTransition = function () {

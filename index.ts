@@ -3,6 +3,8 @@ import './style.css';
 
 import game = require('./game.js');
 
+let tt = 0;
+
 function InputView() {
   this.root_el = document.querySelector('g#input-view');
   this.text_group_el = this.root_el
@@ -93,9 +95,13 @@ TileView.prototype.draw = function (tile, in_level) {
     //this.base_animate_el.beginElement();
   }
 
-  if (tile.transitioned()) {
+  if (in_level) {
+    console.log('in_level', tile.state, tile.prev_state);
+  }
+
+  if (in_level && tile.transitioned()) {
     console.log('transition!');
-    if (tile.transitionTo(game.T_STATES.T_COMPLETE | game.T_STATES.T_END)) {
+    if (tile.transitionedTo(game.T_STATES.T_COMPLETE | game.T_STATES.T_END)) {
       console.log('transitioned to T_COMPETE');
       this.base_animate_el.beginElement();
     }
@@ -560,8 +566,13 @@ function handleShare() {
 
 function gameloop() {
   window.requestAnimationFrame(gameloop);
-  update();
-  draw();
+
+  ++tt;
+  if (tt % 111 === 0) {
+    console.log('draw___');
+    update();
+    draw();
+  }
 }
 
 // update game
