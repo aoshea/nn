@@ -169,6 +169,48 @@ function createTileViewMap() {
   return views;
 }
 
+function getStoredGame() {
+  const game_key = `game-${window.ZZ_GAME_NO}`;
+  const item = window.localStorage.getItem('z-words');
+  if (item === null || typeof item === 'undefined') {
+    const game_info = {
+      [game_key]: {
+        level: 0,
+        hints: 3,
+        words: [],
+      }
+    }
+    window.localStorage.setItem('z-words', JSON.stringify(game_info));
+    return game_info;
+  } else {
+    return JSON.parse(item);
+  }
+}
+
+function saveStoredGame(item) {
+  window.localStorage.setItem('z-words', JSON.stringify(item));
+}
+
+function updateStorage(prop, value) {
+  const game_key = `game-${window.ZZ_GAME_NO}`;
+  const stored_game = getStoredGame();
+  const updated_game = {
+    ...stored_game,
+    [game_key]: {
+      ...stored_game[game_key],
+      [prop]: value
+    },
+  };
+  saveStoredGame(updated_game);
+}
+
+function fromStorage(prop, def_value) {
+  const game_key = `game-${window.ZZ_GAME_NO}`;
+  const stored_game = getStoredGame();
+  const game = stored_game[game_key];
+  return game[prop] ?? def_value;
+}
+
 const input_view_animate = document.querySelector('#text-input-animate');
 input_view_animate.addEventListener(
   'beginEvent',
@@ -182,13 +224,17 @@ input_view_animate.addEventListener(
 );
 
 let t = 0;
-let game_level = 0;
 let min_chars = 3;
-let hints = 3;
+
+// game level saved in storage
+let game_level = fromStorage('level', 0);
+
+// hints saved in storage
+let hints = fromStorage('hints', 3);
 
 // statistics
-let streak = '0';
-let best_streak = '0';
+let streak = fromStorage('streak', 0);
+let best_streak = fromStorage('xstreak', 0);
 let today_score = '3/8';
 let today_hints = `${hints}/3`;
 let current_streak = `Current ${streak}`;

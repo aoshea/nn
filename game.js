@@ -186,7 +186,7 @@ function Tile(char, original_index) {
 
 Tile.prototype.isComplete = function () {
   return this.state & T_COMPLETE;
-}
+};
 
 Tile.prototype.updateState = function (newState) {
   this.prev_state = this.state;
