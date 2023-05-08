@@ -67,6 +67,37 @@ button.modal {
   padding: 0.25rem 0.5rem;
 }
 
+button[name="hint"] {
+  position: relative;
+  display: block;
+  padding-right: 20px;
+}
+
+button[name="hint"]::before {
+  content: '';
+  position: absolute;
+  display: block;
+  top: 3px;
+  right: 4px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background-color: black;
+  opacity: 1;
+  color: white;
+}
+
+button[name="hint"]::after {
+  content: '' attr(data-count) '';
+  position: absolute;
+  display: block;
+  top: 4px;
+  right: 4px;
+  width: 14px;
+  height: 14px;
+  color: white;
+}
+
 .typo--h1 {
   font-size: 24px;
 }
@@ -286,16 +317,20 @@ rect.layer--overlay {
   fill: gray;
 }
 
+/*
+.state--hint {
+  opacity: 1;
+}
 .state--hint > .layer--base {
   fill: gray;
 }
 .state--hint > .layer--mask {
   fill: black;
 }
-
 .state--hint > .layer--edge {
   stroke: gray;
 }
+*/
 
 text {
   font-family: var(--font-stack);
