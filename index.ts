@@ -96,18 +96,18 @@ TileView.prototype.focus = function () {
 };
 
 TileView.prototype.draw = function (tile, in_level) {
-  // this.drawText(tile.char);
   if (!in_level) {
     return;
   }
 
-  this.drawText(tile.char);
+  if (this.drawText(tile.char)) {
+    this.text_mask_animate_el.beginElement();
+  }
 
   if (tile.transitioned()) {
     // initial drawing of char
     if (tile.transitionedTo(game.T_STATES.T_IDLE)) {
       this.setState('state--idle', true);
-      this.text_mask_animate_el.beginElement();
     }
 
     // word completed with char
@@ -117,28 +117,10 @@ TileView.prototype.draw = function (tile, in_level) {
 
     // hinted?
     if (tile.transitionedTo(game.T_STATES.T_HINT)) {
-      console.log('a tile was hinted');
       this.setState('state--hint', true);
     }
     tile.endTransition();
   }
-
-  /*
-  if (tile.transitioned()) {
-    if (tile.transitionTo(T_COMPLETE | T_END)) {
-      this.base_animate_el.beginElement();
-    }
-    if (tile.transitionTo(T_IDLE | T_END)) {
-      this.text_mask_animate_el.beginElement();
-    }
-
-    this.setState('state--use', tile.state & T_USE);
-    this.setState('state--empty', tile.state & T_EMPTY);
-    this.setState('state--idle', tile.state & T_IDLE);
-    this.setState('state--hint', tile.state & T_HINT);
-    tile.prev_state = tile.state;
-  }
-  */
 };
 
 TileView.prototype.drawText = function (char) {
@@ -238,7 +220,7 @@ function updateGameStorage(obj) {
     ...data,
     [gameKey]: {
       ...game[gameKey],
-      ...obj
+      ...obj,
     },
   };
   saveStorageData(newData);
@@ -518,13 +500,11 @@ function inputHandler(e) {
 function handleClick(target) {
   const index = parseInt(target.id.split('-')[1], 10);
   const tile_view = tile_views[index];
-  console.log('index', index, tile_view);
   tile_view.focus();
   const tile = tile_mgr.atIndex(index);
   if (typeof tile.select_index === 'undefined' || tile.select_index === null) {
     tile_mgr.select(index);
   }
-  console.log(tile_mgr.currentInput());
 }
 
 function handleDelete() {
@@ -532,7 +512,6 @@ function handleDelete() {
 }
 
 function showPlum(index) {
-  console.log('showPlum', index);
   plumTspan.textContent = plumtexts[index];
   plumAnimate.beginElement();
   plumAnimateFade.beginElement();
@@ -550,19 +529,10 @@ function advanceLevel() {
     tile_mgr.show(game_level);
     input_char_view.reset(game_level + min_chars);
     const serializedTiles = tile_mgr.serialize();
-    console.log('save serialedz tilesl', serializedTiles);
     updateGameStorage({
       tiles: serializedTiles,
-      level: game_level
+      level: game_level,
     });
-
-    /*
-    const tile = tiles[game_level + 2];
-    const tile_char = getChar(tile.index);
-    if (tile_char) {
-      tile.show(tile_char);
-    }
-    */
   } else {
     /*
     for (let i = 0; i < tiles.length; ++i) {
@@ -605,7 +575,7 @@ function handleHint() {
   if (tile_mgr.atIndex(nextCharIndex)) {
     tile_mgr.atIndex(nextCharIndex).hint();
     --hints;
-    updateGameStorage({hints: hints});
+    updateGameStorage({ hints: hints });
     tile_mgr.select(nextCharIndex);
   }
 }
@@ -661,13 +631,8 @@ function update() {}
 function draw() {
   const min_len = 3;
   for (let i = 0; i < tile_views.length; ++i) {
-    //const tile = tiles[i];
     const tile = tile_mgr.atIndex(i);
-    // console.log(i, tile.char);
     tile_views[i].draw(tile, i < game_level + min_len);
-    //const tile_view = tile_view_map[tile.getKey(i)];
-    // tile_view.draw(tile);
-    //tile_view.drawText(tile.char);
   }
   ++t;
   renderInput();
