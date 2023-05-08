@@ -228,6 +228,10 @@ Tile.prototype.complete = function () {
   this.updateState(newState);
 };
 
+Tile.prototype.hint = function () {
+  this.updateState(this.state | T_HINT);
+};
+
 /**
  * End Tile class
  */

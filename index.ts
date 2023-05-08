@@ -114,6 +114,12 @@ TileView.prototype.draw = function (tile, in_level) {
     if (tile.transitionedTo(game.T_STATES.T_COMPLETE | game.T_STATES.T_END)) {
       this.base_animate_el.beginElement();
     }
+
+    // hinted?
+    if (tile.transitionedTo(game.T_STATES.T_HINT)) {
+      console.log('a tile was hinted');
+      this.setState('state--hint', true);
+    }
     tile.endTransition();
   }
 
@@ -561,37 +567,55 @@ function handleEnter() {
 }
 
 function handleHint() {
-  if (hints > 0) {
-    if (game_level < 5) {
-      // what is the next letter? check input_indices
+  if (hints <= 0) {
+    console.log('Hint: Out of hints.');
+    return;
+  }
+  console.log('answers', answer_list);
+  if (game_level >= 5) {
+    console.log('Hint: Game level too high');
+    return;
+  }
 
-      const game_level_answer = answers.get(game_level + 3)[0];
-      // check we are correct
-      for (let i = 0; i < input_indices.length; ++i) {
-        console.log(getChar(input_indices[i]), game_level_answer.charAt(i));
-        if (getChar(input_indices[i]) !== game_level_answer.charAt(i)) {
-          console.log('wrong input, clear it from here on');
+  const answersForLevel = game.answersForLevel(answer_list, game_level);
+  const nextChar = tile_mgr.nextChar(answersForLevel);
+  const nextCharIndex = tile_mgr.getTileIndexFromChar(nextChar, game_level);
+  if (tile_mgr.atIndex(nextCharIndex)) {
+    tile_mgr.atIndex(nextCharIndex).hint();
+    --hints;
+    updateGameStorage('hints', hints);
+  }
+  /*
+  if (game_level < 5) {
+    // what is the next letter? check input_indices
 
-          let k = input_indices.length;
-          while (k > i) {
-            input_indices.pop();
-            --k;
-          }
-          break;
+    const game_level_answer = answers.get(game_level + 3)[0];
+    // check we are correct
+    for (let i = 0; i < input_indices.length; ++i) {
+      console.log(getChar(input_indices[i]), game_level_answer.charAt(i));
+      if (getChar(input_indices[i]) !== game_level_answer.charAt(i)) {
+        console.log('wrong input, clear it from here on');
+
+        let k = input_indices.length;
+        while (k > i) {
+          input_indices.pop();
+          --k;
         }
-      }
-      const next_char = game_level_answer.charAt(input_indices.length);
-      const next_char_index = getCharIndex(next_char);
-      const next_tile = tiles.find((el) => el.index === next_char_index);
-      if (next_tile) {
-        next_tile.hint();
-        addInput(getCharIndex(next_char));
-        --hints;
-      } else {
-        throw new Error('No tile exists for ' + next_char_index + next_char);
+        break;
       }
     }
+    const next_char = game_level_answer.charAt(input_indices.length);
+    const next_char_index = getCharIndex(next_char);
+    const next_tile = tiles.find((el) => el.index === next_char_index);
+    if (next_tile) {
+      next_tile.hint();
+      addInput(getCharIndex(next_char));
+      --hints;
+    } else {
+      throw new Error('No tile exists for ' + next_char_index + next_char);
+    }
   }
+  */
 }
 
 function handleShare() {
@@ -632,7 +656,7 @@ function gameloop() {
   window.requestAnimationFrame(gameloop);
 
   ++tt;
-  if (tt % 215 === 0) {
+  if (tt % 5 === 0) {
     update();
     draw();
   }
