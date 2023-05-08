@@ -96,10 +96,16 @@ TileView.prototype.focus = function () {
 };
 
 TileView.prototype.draw = function (tile, in_level) {
-  if (in_level && tile.transitioned()) {
+  // this.drawText(tile.char);
+  if (!in_level) {
+    return;
+  }
+
+  this.drawText(tile.char);
+
+  if (tile.transitioned()) {
     // initial drawing of char
     if (tile.transitionedTo(game.T_STATES.T_IDLE)) {
-      this.drawText(tile.char);
       this.setState('state--idle', true);
       this.text_mask_animate_el.beginElement();
     }
@@ -456,19 +462,8 @@ function handleClickStats() {
 }
 
 function handleShuffle() {
-  tile_mgr.shuffle(game_level, game.answersForLevel(answer_list, game_level));
-  const res = tile_mgr.currentTilesAsChars(game_level);
-  console.log(res);
-}
-
-function initTileViews(handler) {
-  const tile_view_map = {};
-  for (let i = 0; i < 8; ++i) {
-    const view = new TileView(i);
-    view.addListeners(handler);
-    tile_view_map[view.getKey()] = view;
-  }
-  return tile_view_map;
+  const answersForLevel = game.answersForLevel(answer_list, game_level);
+  tile_mgr.shuffle(game_level, answersForLevel);
 }
 
 function inputHandler(e) {
@@ -637,7 +632,7 @@ function gameloop() {
   window.requestAnimationFrame(gameloop);
 
   ++tt;
-  if (tt % 5 === 0) {
+  if (tt % 215 === 0) {
     update();
     draw();
   }
@@ -652,6 +647,7 @@ function draw() {
   for (let i = 0; i < tile_views.length; ++i) {
     //const tile = tiles[i];
     const tile = tile_mgr.atIndex(i);
+    // console.log(i, tile.char);
     tile_views[i].draw(tile, i < game_level + min_len);
     //const tile_view = tile_view_map[tile.getKey(i)];
     // tile_view.draw(tile);

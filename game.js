@@ -32,6 +32,8 @@ TileManager.prototype.shuffle = function (game_level, answers) {
     }
     ++iterations;
   }
+  console.log('shuffle iterations', iterations);
+  console.log('tiles', this.tiles);
 };
 
 TileManager.prototype.clear = function () {
