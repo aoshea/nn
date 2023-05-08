@@ -39,7 +39,7 @@ button {
   appearance: none;
   background: rgba(0, 0, 0, 0.8);
   color: white;
-  border: none;
+  border: 2px solid black;
   border-radius: 5px;
   font-family: var(--font-stack);
   font-size: var(--font-size);
@@ -287,10 +287,10 @@ rect.layer--overlay {
 }
 
 .state--hint > .layer--base {
-  fill: white;
+  fill: gray;
 }
 .state--hint > .layer--mask {
-  fill: white;
+  fill: black;
 }
 
 .state--hint > .layer--edge {

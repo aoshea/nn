@@ -173,6 +173,15 @@ const tile_mgr = game.createTileMgr(game.createTiles(char_set));
 const tile_views = createTileViewMap();
 tile_views.forEach((tile) => tile.addListeners(inputHandler));
 
+// key handlers
+window.onkeypress = function (e) {
+  if (e.keyCode === 48) {
+    // zero
+    console.log('Reset storage.');
+    resetStorage();
+  }
+};
+
 function createTileViewMap() {
   const views = [];
   for (let i = 0; i < max_chars; ++i) {
@@ -182,24 +191,28 @@ function createTileViewMap() {
 }
 
 function getStorageData() {
-  const gameKey = `game-${window.ZZ_GAME_NO}`;
   const item = window.localStorage.getItem('z-words');
   if (item === null || typeof item === 'undefined') {
-    const data = {
-      [gameKey]: {
-        level: 0,
-        hints: 3,
-        words: [],
-        tiles: [],
-      },
-      streak: 0,
-      all_time_streak: 0,
-    };
-    window.localStorage.setItem('z-words', JSON.stringify(data));
-    return data;
+    return resetStorage();
   } else {
     return JSON.parse(item);
   }
+}
+
+function resetStorage() {
+  const gameKey = `game-${window.ZZ_GAME_NO}`;
+  const data = {
+    [gameKey]: {
+      level: 0,
+      hints: 3,
+      words: [],
+      tiles: [],
+    },
+    streak: 0,
+    all_time_streak: 0,
+  };
+  window.localStorage.setItem('z-words', JSON.stringify(data));
+  return data;
 }
 
 function saveStorageData(data) {
@@ -409,6 +422,10 @@ function updateStats() {
   */
 }
 
+function handleReset() {
+  resetStorage();
+}
+
 function addGlobalListeners() {
   window.addEventListener('resize', setLayoutHeight);
   document
@@ -420,6 +437,9 @@ function addGlobalListeners() {
   document
     .querySelector('button[name="share"]')
     .addEventListener('click', handleShare, true);
+  document
+    .querySelector('button[name="reset"]')
+    .addEventListener('click', handleReset, true);
 }
 
 function addGameListeners() {
