@@ -37,7 +37,7 @@ button {
   margin: 0;
   padding: 0.25rem 0.5rem;
   appearance: none;
-  background: rgba(0, 0, 0, 0.8);
+  background: black;
   color: white;
   border: 2px solid black;
   border-radius: 5px;
@@ -52,6 +52,7 @@ button:disabled {
 }
 
 button.secondary {
+  border: 2px solid orange;
   background: orange;
   color: black;
 }
@@ -59,35 +60,41 @@ button.secondary {
 button.tertiary {
   background: white;
   color: black;
+  border: 2px solid black;
 }
 
 button.modal {
+  border: none;
   background: white;
   color: black;
   padding: 0.25rem 0.5rem;
 }
 
-button[name="hint"] {
+button.large {
+  font-size: var(--font-size-large);
+}
+
+button[name='hint'] {
   position: relative;
   display: block;
   padding-right: 20px;
 }
 
-button[name="hint"]::before {
+button[name='hint']::before {
   content: '';
   position: absolute;
   display: block;
   top: 3px;
-  right: 4px;
-  width: 14px;
-  height: 14px;
+  right: 3.5px;
+  width: 15px;
+  height: 15px;
   border-radius: 50%;
   background-color: black;
   opacity: 1;
   color: white;
 }
 
-button[name="hint"]::after {
+button[name='hint']::after {
   content: '' attr(data-count) '';
   position: absolute;
   display: block;
@@ -100,10 +107,13 @@ button[name="hint"]::after {
 
 .typo--h1 {
   font-size: 24px;
+  color: black;
+  text-shadow: 2px 2px orange;
 }
 
 .typo--h1 span {
-  color: orange;
+  color: black;
+  text-shadow: 2px 2px orange;
 }
 
 .typo--btn {

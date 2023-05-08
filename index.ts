@@ -230,7 +230,7 @@ function updateGlobalStorage(prop, value) {
   saveStorageData(data);
 }
 
-function updateGameStorage(prop, value) {
+function updateGameStorage(obj) {
   const gameKey = `game-${window.ZZ_GAME_NO}`;
   const data = getStorageData();
   const game = data[gameKey];
@@ -238,7 +238,7 @@ function updateGameStorage(prop, value) {
     ...data,
     [gameKey]: {
       ...game[gameKey],
-      [prop]: value,
+      ...obj
     },
   };
   saveStorageData(newData);
@@ -272,6 +272,8 @@ let min_chars = 3;
 
 // game level saved in storage
 let game_level = fromGameStorage('level', 0);
+// game serialized tiles saved in storage
+let savedTiles = fromGameStorage('tiles', []);
 
 // hints saved in storage
 let hints = fromGameStorage('hints', 3);
@@ -291,7 +293,7 @@ const input_char_view = new InputView();
 input_char_view.reset(game_level + min_chars);
 
 // set idle state on tiles
-tile_mgr.show(game_level);
+tile_mgr.show(game_level, savedTiles);
 
 // plums
 const plumtexts = [
@@ -543,16 +545,17 @@ function advanceLevel() {
 
   if (game_level < max_chars - 3) {
     tile_mgr.complete(game_level);
-    /*
-    for (let i = 0; i < tiles.length; ++i) {
-      if (tiles[i].state & (T_IDLE | T_USE)) {
-        tiles[i].complete();
-      }
-    }
-    */
+
     ++game_level;
     tile_mgr.show(game_level);
     input_char_view.reset(game_level + min_chars);
+    const serializedTiles = tile_mgr.serialize();
+    console.log('save serialedz tilesl', serializedTiles);
+    updateGameStorage({
+      tiles: serializedTiles,
+      level: game_level
+    });
+
     /*
     const tile = tiles[game_level + 2];
     const tile_char = getChar(tile.index);
@@ -591,7 +594,6 @@ function handleHint() {
     console.log('Hint: Out of hints.');
     return;
   }
-  console.log('answers', answer_list);
   if (game_level >= 5) {
     console.log('Hint: Game level too high');
     return;
@@ -599,44 +601,13 @@ function handleHint() {
 
   const answersForLevel = game.answersForLevel(answer_list, game_level);
   const nextChar = tile_mgr.nextChar(answersForLevel);
-  const nextCharIndex = tile_mgr.getTileIndexFromChar(nextChar, game_level);
+  const nextCharIndex = tile_mgr.getIndexFromChar(nextChar);
   if (tile_mgr.atIndex(nextCharIndex)) {
     tile_mgr.atIndex(nextCharIndex).hint();
     --hints;
-    updateGameStorage('hints', hints);
+    updateGameStorage({hints: hints});
     tile_mgr.select(nextCharIndex);
   }
-  /*
-  if (game_level < 5) {
-    // what is the next letter? check input_indices
-
-    const game_level_answer = answers.get(game_level + 3)[0];
-    // check we are correct
-    for (let i = 0; i < input_indices.length; ++i) {
-      console.log(getChar(input_indices[i]), game_level_answer.charAt(i));
-      if (getChar(input_indices[i]) !== game_level_answer.charAt(i)) {
-        console.log('wrong input, clear it from here on');
-
-        let k = input_indices.length;
-        while (k > i) {
-          input_indices.pop();
-          --k;
-        }
-        break;
-      }
-    }
-    const next_char = game_level_answer.charAt(input_indices.length);
-    const next_char_index = getCharIndex(next_char);
-    const next_tile = tiles.find((el) => el.index === next_char_index);
-    if (next_tile) {
-      next_tile.hint();
-      addInput(getCharIndex(next_char));
-      --hints;
-    } else {
-      throw new Error('No tile exists for ' + next_char_index + next_char);
-    }
-  }
-  */
 }
 
 function handleShare() {

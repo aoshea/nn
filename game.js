@@ -78,6 +78,11 @@ TileManager.prototype.atIndex = function (index) {
   return this.tiles[index];
 };
 
+// this one uses current shuffled index
+TileManager.prototype.getIndexFromChar = function (char) {
+  return this.tiles.findIndex((x) => x.char === char);
+};
+
 TileManager.prototype.getTileIndexFromChar = function (char, game_level) {
   return this.getCurrentTiles(game_level).findIndex((x) => x.char === char);
 };
@@ -144,8 +149,18 @@ TileManager.prototype.complete = function (game_level) {
   this.getCurrentTiles(game_level).forEach((tile) => tile.complete());
 };
 
-TileManager.prototype.show = function (game_level) {
-  this.getCurrentTiles(game_level).forEach((tile) => tile.show());
+TileManager.prototype.show = function (level, savedTiles) {
+  const currentTiles = this.getCurrentTiles(level);
+  for (let i = 0; i < currentTiles.length; ++i) {
+    console.log(
+      i,
+      savedTiles ? savedTiles.length : 'empty',
+      savedTiles ? savedTiles[i] : 'empty'
+    );
+    const tile = currentTiles[i];
+    tile.show();
+  }
+  //this.getCurrentTiles(level).forEach((tile) => tile.show());
 };
 
 TileManager.prototype.getCompleteCount = function () {
@@ -157,7 +172,7 @@ TileManager.prototype.getCompleteCount = function () {
   }, 0);
 };
 
-TileManager.prototype.serializeStates = function () {
+TileManager.prototype.serialize = function () {
   return this.tiles.map((tile) => [tile.char, tile.original_index, tile.state]);
 };
 
