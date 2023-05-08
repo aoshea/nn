@@ -604,6 +604,7 @@ function handleHint() {
     tile_mgr.atIndex(nextCharIndex).hint();
     --hints;
     updateGameStorage('hints', hints);
+    tile_mgr.select(nextCharIndex);
   }
   /*
   if (game_level < 5) {
