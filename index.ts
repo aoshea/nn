@@ -3,6 +3,11 @@ import './style.css';
 
 import game = require('./game.js');
 
+/** debug version */
+const VERSION = 0.2;
+document.querySelector('.stats aside').textContent = `version ${VERSION}`;
+/** debug version */
+
 let tt = 0;
 
 function InputView() {
@@ -105,6 +110,7 @@ TileView.prototype.draw = function (tile, in_level) {
   }
 
   if (tile.transitioned()) {
+    console.log('_tile transitioned!', tile.char, tile.state);
     // initial drawing of char
     if (tile.transitionedTo(game.T_STATES.T_IDLE)) {
       this.setState('state--idle', true);

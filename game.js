@@ -164,7 +164,7 @@ TileManager.prototype.show = function (level, savedTiles) {
       state = savedTiles[i][2];
       console.log('state', state);
     }
-    
+
     const tile = currentTiles[i];
     tile.show(state);
   }
@@ -237,13 +237,10 @@ Tile.prototype.endTransition = function () {
 };
 
 Tile.prototype.show = function (savedState) {
-  console.log('this.state', T_EMPTY, this.state, savedState);
   if (this.state & T_EMPTY) {
-    
     const addState = savedState ? savedState : T_IDLE;
     let newState = this.state | addState; // add idle state
     newState = newState & ~T_EMPTY; // remove empty state
-    console.log('new state', newState);
     this.updateState(newState);
   }
 };

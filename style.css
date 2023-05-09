@@ -223,6 +223,14 @@ button[name='hint']::after {
   height: 100%;
 }
 
+.stats > footer {
+  display: flex;
+}
+
+.stats > footer aside {
+  margin-left: auto;
+}
+
 ol {
   margin: 0;
   padding: 0;
