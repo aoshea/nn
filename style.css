@@ -335,6 +335,15 @@ rect.layer--overlay {
   fill: gray;
 }
 
+.state--complete > .layer--base {
+  opacity: 1;
+}
+
+.layer--base {
+  opacity: 0;
+}
+
+
 /*
 .state--hint {
   opacity: 1;

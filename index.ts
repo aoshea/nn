@@ -107,18 +107,22 @@ TileView.prototype.draw = function (tile, in_level) {
 
   if (this.drawText(tile.char)) {
     this.text_mask_animate_el.beginElement();
+    tile.prevState = game.T_STATES.T_EMPTY;
   }
 
   if (tile.transitioned()) {
     console.log('_tile transitioned!', tile.char, tile.state);
     // initial drawing of char
     if (tile.transitionedTo(game.T_STATES.T_IDLE)) {
+      console.log('transitioned to idel!');
       this.setState('state--idle', true);
+      this.setState('state--complete', false);
     }
 
     // word completed with char
     if (tile.transitionedTo(game.T_STATES.T_COMPLETE | game.T_STATES.T_END)) {
-      this.base_animate_el.beginElement();
+      this.base_animate_el.beginElementAt(0);
+      this.setState('state--complete', true);
     }
 
     // hinted?
