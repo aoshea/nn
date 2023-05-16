@@ -56,6 +56,7 @@ TileManager.prototype.clearOne = function () {
 
 TileManager.prototype.select = function (index) {
   this.tiles[index].select_index = this.nextSelectIndex();
+  console.log('SELECTED A TILE', index, this.tiles);
 };
 
 TileManager.prototype.hint = function (index) {
@@ -114,18 +115,29 @@ TileManager.prototype.checkInputValidity = function (answers) {
   if (!Array.isArray(answers) || answers.length === 0) {
     throw new Error('Answers must be provided to check input validity');
   }
+  const currentInputChars = this.currentTilesAsChars().split('');
 
-  const currentInputChars = this.currentInput().split('');
+  // any valid inputs?
+  let isValid = false;
   for (let i = 0; i < answers.length; ++i) {
     const answerChars = answers[i].split('');
     for (let k = 0; k < currentInputChars.length; ++k) {
       if (currentInputChars[k] !== answerChars[k]) {
-        return false;
+        break;
       }
+      console.log(
+        'checkInputValidity',
+        currentInputChars[k],
+        ',',
+        answerChars[k]
+      );
+      isValid = true;
     }
   }
-
-  return true;
+  console.log(
+    'isValid[' + isValid + '] for input[' + currentInputChars + ']'
+  );
+  return isValid;
 };
 
 TileManager.prototype.nextChar = function (answers) {
@@ -133,18 +145,19 @@ TileManager.prototype.nextChar = function (answers) {
     throw new Error('Answers must be provided to find next letter');
   }
 
-  const current_input = this.currentInput();
-  const current_input_chars = current_input.split('');
-
-  let next_index = 0;
-  let best_answer_index = 0;
+  const currentInputChars = this.currentTilesAsChars().split('');
+  let nextIndex = 0;
+  let bestAnswerIndex = 0;
   let isInputValid = true;
+  console.log('tiles', this.tiles);
   for (let i = 0; i < answers.length; ++i) {
-    const answer_chars = answers[i].split('');
+    const answerChars = answers[i].split('');
     let k = 0;
-    for (k = 0; k < current_input_chars.length; ++k) {
-      console.log('compare', current_input_chars[k], answer_chars[k]);
-      if (current_input_chars[k] !== answer_chars[k]) {
+    console.log('looping over answers', answerChars);
+    console.log('compre with current input', currentInputChars);
+    for (k = 0; k < currentInputChars.length; ++k) {
+      console.log('compare', currentInputChars[k], answerChars[k]);
+      if (currentInputChars[k] !== answerChars[k]) {
         isInputValid = false;
         break;
       }
@@ -152,19 +165,20 @@ TileManager.prototype.nextChar = function (answers) {
     if (!isInputValid) {
       break;
     }
-    if (k > next_index) {
-      next_index = k;
-      best_answer_index = i;
+    if (k > nextIndex) {
+      nextIndex = k;
+      bestAnswerIndex = i;
     }
   }
 
   // now, in theory, we have the next index and best answer
-  const best_answer = answers[best_answer_index];
-  if (next_index >= best_answer.length) {
+  const bestAnswer = answers[bestAnswerIndex];
+  console.log('bestAnswer', bestAnswer);
+  if (nextIndex >= bestAnswer.length) {
     return -1;
   }
-  const next_letter = best_answer.charAt(next_index);
-  return next_letter;
+  const nextChar = bestAnswer.charAt(nextIndex);
+  return nextChar;
 };
 
 TileManager.prototype.complete = function (game_level) {

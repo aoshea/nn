@@ -576,9 +576,11 @@ function handleHint() {
   const answersForLevel = game.answersForLevel(answer_list, game_level);
   const isInputValid = tile_mgr.checkInputValidity(answersForLevel);
   if (!isInputValid) {
+    console.log('not valid so clear');
     tile_mgr.clear();
   }
   const nextChar = tile_mgr.nextChar(answersForLevel);
+  console.log('next char', nextChar);
   const nextCharIndex = tile_mgr.getIndexFromChar(nextChar);
   if (nextCharIndex > -1 && tile_mgr.atIndex(nextCharIndex)) {
     tile_mgr.atIndex(nextCharIndex).hint();
