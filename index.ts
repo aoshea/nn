@@ -580,9 +580,13 @@ function handleHint() {
   }
 
   const answersForLevel = game.answersForLevel(answer_list, game_level);
+  const isInputValid = tile_mgr.checkInputValidity(answersForLevel);
+  if (!isInputValid) {
+    tile_mgr.clear();
+  }
   const nextChar = tile_mgr.nextChar(answersForLevel);
   const nextCharIndex = tile_mgr.getIndexFromChar(nextChar);
-  if (tile_mgr.atIndex(nextCharIndex)) {
+  if (nextCharIndex > -1 && tile_mgr.atIndex(nextCharIndex)) {
     tile_mgr.atIndex(nextCharIndex).hint();
     --hints;
     updateGameStorage({ hints: hints });

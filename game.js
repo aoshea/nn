@@ -32,8 +32,6 @@ TileManager.prototype.shuffle = function (game_level, answers) {
     }
     ++iterations;
   }
-  console.log('shuffle iterations', iterations);
-  console.log('tiles', this.tiles);
 };
 
 TileManager.prototype.clear = function () {
@@ -112,6 +110,24 @@ TileManager.prototype.nextSelectIndex = function () {
   );
 };
 
+TileManager.prototype.checkInputValidity = function (answers) {
+  if (!Array.isArray(answers) || answers.length === 0) {
+    throw new Error('Answers must be provided to check input validity');
+  }
+
+  const currentInputChars = this.currentInput().split('');
+  for (let i = 0; i < answers.length; ++i) {
+    const answerChars = answers[i].split('');
+    for (let k = 0; k < currentInputChars.length; ++k) {
+      if (currentInputChars[k] !== answerChars[k]) {
+        return false;
+      }
+    }
+  }
+
+  return true;
+};
+
 TileManager.prototype.nextChar = function (answers) {
   if (!Array.isArray(answers) || answers.length === 0) {
     throw new Error('Answers must be provided to find next letter');
@@ -122,13 +138,19 @@ TileManager.prototype.nextChar = function (answers) {
 
   let next_index = 0;
   let best_answer_index = 0;
+  let isInputValid = true;
   for (let i = 0; i < answers.length; ++i) {
     const answer_chars = answers[i].split('');
     let k = 0;
     for (k = 0; k < current_input_chars.length; ++k) {
+      console.log('compare', current_input_chars[k], answer_chars[k]);
       if (current_input_chars[k] !== answer_chars[k]) {
+        isInputValid = false;
         break;
       }
+    }
+    if (!isInputValid) {
+      break;
     }
     if (k > next_index) {
       next_index = k;
@@ -139,7 +161,7 @@ TileManager.prototype.nextChar = function (answers) {
   // now, in theory, we have the next index and best answer
   const best_answer = answers[best_answer_index];
   if (next_index >= best_answer.length) {
-    throw new Error('Cannot show hint for correct guess');
+    return -1;
   }
   const next_letter = best_answer.charAt(next_index);
   return next_letter;
