@@ -533,6 +533,8 @@ function advanceLevel() {
   showPlum(game_level);
 
   if (game_level < max_chars - 3) {
+
+    tile_mgr.clear();
     tile_mgr.complete(game_level);
 
     ++game_level;
@@ -551,6 +553,7 @@ function advanceLevel() {
       }
     }
     */
+    tile_mgr.complete(game_level);
     setTimeout(toggleStats, 3000);
   }
 }
@@ -563,7 +566,6 @@ function handleEnter() {
   );
   if (is_correct) {
     advanceLevel();
-    tile_mgr.clear();
   } else {
     input_view_animate.beginElement();
   }
