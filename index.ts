@@ -529,33 +529,25 @@ function showPlum(index) {
 }
 
 function advanceLevel() {
-  updateStats();
   showPlum(game_level);
+  tile_mgr.complete(game_level);
 
   if (game_level < max_chars - 3) {
-
     tile_mgr.clear();
-    tile_mgr.complete(game_level);
-
     ++game_level;
     tile_mgr.show(game_level);
     input_char_view.reset(game_level + min_chars);
-    const serializedTiles = tile_mgr.serialize();
-    updateGameStorage({
-      tiles: serializedTiles,
-      level: game_level,
-    });
   } else {
-    /*
-    for (let i = 0; i < tiles.length; ++i) {
-      if (tiles[i].state & (T_IDLE | T_USE | T_COMPLETE)) {
-        tiles[i].end();
-      }
-    }
-    */
-    tile_mgr.complete(game_level);
+    tile_mgr.endGame();
     setTimeout(toggleStats, 3000);
   }
+
+  updateStats();
+  const serializedTiles = tile_mgr.serialize();
+  updateGameStorage({
+    tiles: serializedTiles,
+    level: game_level,
+  });
 }
 
 function handleEnter() {

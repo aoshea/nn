@@ -206,6 +206,10 @@ TileManager.prototype.serialize = function () {
   return this.tiles.map((tile) => [tile.char, tile.original_index, tile.state]);
 };
 
+TileManager.prototype.endGame = function () {
+  this.tiles.forEach((tile) => tile.end());
+};
+
 /**
  * Tile class
  */
@@ -271,6 +275,10 @@ Tile.prototype.complete = function () {
   let newState = this.state | T_COMPLETE; // add state
   newState = newState & ~T_IDLE; // remove idle state
   this.updateState(newState);
+};
+
+Tile.prototype.end = function () {
+  this.updateState(this.state | T_END);
 };
 
 Tile.prototype.hint = function () {
