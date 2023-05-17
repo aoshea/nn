@@ -537,7 +537,7 @@ function advanceLevel() {
     tile_mgr.show(game_level);
     input_char_view.reset(game_level + min_chars);
   } else {
-    tile_mgr.endGame();
+    //tile_mgr.endGame();
     setTimeout(toggleStats, 3000);
   }
 

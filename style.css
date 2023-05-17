@@ -6,6 +6,7 @@
     Helvetica, Arial, sans-serif;
   --font-size: 10px;
   --font-size-large: 14px;
+  --font-size-xlarge: 24px;
   --font-size-svg: 8px;
   --font-weight: 600;
 }
@@ -64,6 +65,9 @@ button.tertiary {
 }
 
 button.modal {
+  position: absolute;
+  top: -0.1rem;
+  right: 0;
   border: none;
   background: white;
   color: black;
@@ -160,21 +164,46 @@ button[name='hint']::after {
 }
 
 .stats header {
+  position: relative;
+  text-align: center;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid lightgray;
+}
+
+.stats header h3 {
+  font-size: var(--font-size-large);
+}
+
+.stats-streak {
   display: flex;
   justify-content: space-between;
 }
 
-.stats header h3 {
-  margin: 0.5rem 0;
+.stats-streak figure {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  padding: 1rem 1rem 0;
+}
+
+.stats-streak > figure > div {
+  font-size: var(--font-size-xlarge);
 }
 
 .result-grid {
   padding: 1rem 0;
 }
 
+.result-header-row {
+  color: gray;
+  border-bottom: 2px solid rgb(158, 153, 153);
+}
+
 .result-row {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   padding: 0.5rem;
   font-size: var(--font-size-large);
   border-radius: 2px;
@@ -342,7 +371,6 @@ rect.layer--overlay {
 .layer--base {
   opacity: 0;
 }
-
 
 /*
 .state--hint {

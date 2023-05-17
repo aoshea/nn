@@ -683,31 +683,40 @@
     <div class="stats">
       <header>
         <h3>Statistics</h3>
-        <button name="close-drawer" class="modal">X</button>
+        <button name="close-drawer" class="modal">&#10060;</button>
       </header>
-      <article>
+      <article class="stats-streak">
+        <figure>
+          <div id="stat-current-streak">0</div>
+          <figcaption>Current Streak</figcaption>
+        </figure>
+        <figure>
+          <div id="stat-all-time-streak">0</div>
+          <figcaption>All-Time Streak</figcaption>
+        </figure>
+      </article>
+      <article class="stats-week">
         <div class="result-grid">
+          <div class="result-header-row result-row">
+            <span>DAY</span>
+            <span>LETTERS</span>
+            <span>HINTS</span>
+            <span>SCORE</span>
+          </div>
           <div class="result-today result-row">
             <span>TODAY</span>
             <span>3/8</span>
+            <span>3/3</span>
             <span>100%</span>
           </div>
           <div class="result-prev result-row">
             <span>--</span>
             <span>--</span>
             <span>--</span>
-          </div>
-          <div class="result-prev result-row">
-            <span>--</span>
-            <span>--</span>
             <span>--</span>
           </div>
           <div class="result-prev result-row">
             <span>--</span>
-            <span>--</span>
-            <span>--</span>
-          </div>
-          <div class="result-prev result-row">
             <span>--</span>
             <span>--</span>
             <span>--</span>
@@ -716,8 +725,22 @@
             <span>--</span>
             <span>--</span>
             <span>--</span>
+            <span>--</span>
           </div>
           <div class="result-prev result-row">
+            <span>--</span>
+            <span>--</span>
+            <span>--</span>
+            <span>--</span>
+          </div>
+          <div class="result-prev result-row">
+            <span>--</span>
+            <span>--</span>
+            <span>--</span>
+            <span>--</span>
+          </div>
+          <div class="result-prev result-row">
+            <span>--</span>
             <span>--</span>
             <span>--</span>
             <span>--</span>
