@@ -380,19 +380,9 @@ function buildGameResult(game_no, complete_count, max_chars = 8) {
   return result;
 }
 
+
 function updateStats() {
-  const complete_count = tile_mgr.getCompleteCount();
-
-  /*
-  const day = Date.getDate();
-  console.log()
-
-  const el = document.querySelector('.result-today');
-  const score_el = el.querySelector('span + span');
-  const percent_el = el.querySelector('span + span + span');
-  score_el.textContent = `${complete_count}/${max_chars}`;
-  percent_el.textContent = `${(complete_count / max_chars) * 100}%`;
-  */
+  const completeCount = tile_mgr.getCompleteCount();
 
   const day = new Date(Date.now()).getDay();
   
@@ -401,14 +391,15 @@ function updateStats() {
   offsetDay = offsetDay < 0 ? maxDays : offsetDay % maxDays;
   const options = { weekday: "short" };
   const dayText = new Intl.DateTimeFormat("en-US", options).format(Date.now());
-  console.log('day text', dayText);
   const dayRowEl = statElements.dayRows[offsetDay];
   const dayLabelEl = dayRowEl.querySelector('span');
+  const scoreEl = dayRowEl.querySelector('span + span');
+  const hintEl = dayRowEl.querySelector('span + span + span');
+  const percentEl = dayRowEl.querySelector('span + span + span + span');
   dayLabelEl.textContent = dayText;
-  const score_el = dayRowEl.querySelector('span + span');
-  const percent_el = dayRowEl.querySelector('span + span + span');
-  score_el.textContent = `${complete_count}/${max_chars}`;
-  percent_el.textContent = `${(complete_count / max_chars) * 100}%`;
+  scoreEl.textContent = `${completeCount}/${max_chars}`;
+  hintEl.textContent = `${hints}/3`;
+  percentEl.textContent = `${(completeCount / max_chars) * 100}%`;
 
   statElements.currentStreak = streakCount;
   statElements.allTimeStreak = allTimeStreakCount;
