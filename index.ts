@@ -111,10 +111,8 @@ TileView.prototype.draw = function (tile, in_level) {
   }
 
   if (tile.transitioned()) {
-    console.log('_tile transitioned!', tile.char, tile.state);
     // initial drawing of char
     if (tile.transitionedTo(game.T_STATES.T_IDLE)) {
-      console.log('transitioned to idel!');
       this.setState('state--idle', true);
       this.setState('state--complete', false);
     }
@@ -233,6 +231,7 @@ function updateGameStorage(obj) {
       ...obj,
     },
   };
+  console.log('save new data', newData);
   saveStorageData(newData);
 }
 
@@ -574,13 +573,14 @@ function handleHint() {
   }
 
   const answersForLevel = game.answersForLevel(answer_list, game_level);
-  const isInputValid = tile_mgr.checkInputValidity(answersForLevel);
-  if (!isInputValid) {
-    console.log('not valid so clear');
-    tile_mgr.clear();
-  }
   const nextChar = tile_mgr.nextChar(answersForLevel);
+
   console.log('next char', nextChar);
+  if (nextChar !== '') {
+    --hints;
+    updateGameStorage({ hints: hints });
+  }
+  /*
   const nextCharIndex = tile_mgr.getIndexFromChar(nextChar);
   if (nextCharIndex > -1 && tile_mgr.atIndex(nextCharIndex)) {
     tile_mgr.atIndex(nextCharIndex).hint();
@@ -588,6 +588,7 @@ function handleHint() {
     updateGameStorage({ hints: hints });
     tile_mgr.select(nextCharIndex);
   }
+  */
 }
 
 function handleShare() {

@@ -111,59 +111,23 @@ TileManager.prototype.nextSelectIndex = function () {
   );
 };
 
-TileManager.prototype.checkInputValidity = function (answers) {
-  if (!Array.isArray(answers) || answers.length === 0) {
-    throw new Error('Answers must be provided to check input validity');
-  }
-  const currentInputChars = this.currentTilesAsChars().split('');
-
-  // any valid inputs?
-  let isValid = false;
-  for (let i = 0; i < answers.length; ++i) {
-    const answerChars = answers[i].split('');
-    for (let k = 0; k < currentInputChars.length; ++k) {
-      if (currentInputChars[k] !== answerChars[k]) {
-        break;
-      }
-      console.log(
-        'checkInputValidity',
-        currentInputChars[k],
-        ',',
-        answerChars[k]
-      );
-      isValid = true;
-    }
-  }
-  console.log(
-    'isValid[' + isValid + '] for input[' + currentInputChars + ']'
-  );
-  return isValid;
-};
-
 TileManager.prototype.nextChar = function (answers) {
   if (!Array.isArray(answers) || answers.length === 0) {
     throw new Error('Answers must be provided to find next letter');
   }
 
-  const currentInputChars = this.currentTilesAsChars().split('');
+  const currentInputChars = this.currentInput().split('');
+
   let nextIndex = 0;
   let bestAnswerIndex = 0;
-  let isInputValid = true;
-  console.log('tiles', this.tiles);
+  
   for (let i = 0; i < answers.length; ++i) {
     const answerChars = answers[i].split('');
     let k = 0;
-    console.log('looping over answers', answerChars);
-    console.log('compre with current input', currentInputChars);
     for (k = 0; k < currentInputChars.length; ++k) {
-      console.log('compare', currentInputChars[k], answerChars[k]);
       if (currentInputChars[k] !== answerChars[k]) {
-        isInputValid = false;
         break;
       }
-    }
-    if (!isInputValid) {
-      break;
     }
     if (k > nextIndex) {
       nextIndex = k;
@@ -173,11 +137,22 @@ TileManager.prototype.nextChar = function (answers) {
 
   // now, in theory, we have the next index and best answer
   const bestAnswer = answers[bestAnswerIndex];
-  console.log('bestAnswer', bestAnswer);
   if (nextIndex >= bestAnswer.length) {
-    return -1;
+    return '';
   }
   const nextChar = bestAnswer.charAt(nextIndex);
+  const nextCharIndex = this.getIndexFromChar(nextChar);
+
+  // how many should we delete?
+  let deleteCount = currentInputChars.length - nextIndex;
+  while(deleteCount > 0) {
+    this.clearOne();
+    --deleteCount;
+  }
+
+  this.atIndex(nextCharIndex).hint();
+  this.select(nextCharIndex);
+
   return nextChar;
 };
 
