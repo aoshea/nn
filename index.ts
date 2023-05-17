@@ -273,7 +273,6 @@ let streakCount = fromGlobalStorage('streak', 0);
 let allTimeStreakCount = fromGlobalStorage('all_time_streak', 0);
 // let gameCount = fromGameStorage('games_played', 0);
 let today_score = '3/8';
-let game_result = `Zigga ${game_no} ${today_score}\n`;
 
 // statistic elements
 const statElements = {
@@ -404,33 +403,11 @@ function updateStats() {
   statElements.currentStreak = streakCount;
   statElements.allTimeStreak = allTimeStreakCount;
 
-  /*
-
-  document.querySelector('#game-no > span').textContent = `Game ${game_no}`;
-  today_score = `Result ${complete_count}/${max_chars}`;
-  document.querySelector('#today-score').textContent = today_score;
-  today_hints = `Hints ${3 - hints}/3`;
-  document.querySelector('#today-hints').textContent = today_hints;
-
-  streak = getStorageItem('z-streak');
-  best_streak = getStorageItem('z-best-streak');
-  total_played = getStorageItem('z-total-played');
-
-  current_streak = `Current ${streak}`;
-  document.querySelector('#current-streak').textContent = current_streak;
-  all_time_streak = `All-time ${best_streak}`;
-  document.querySelector('#all-time-streak').textContent = all_time_streak;
-
-  document.querySelector(
-    '#total-played'
-  ).textContent = `Played ${total_played}`;
-  game_result = `Game ${game_no} ${today_score}\n \uD83D\uDFE7`;
   document.querySelector('#share-result').textContent = buildGameResult(
     game_no,
-    complete_count,
+    completeCount,
     max_chars
   );
-  */
 }
 
 function handleReset() {
@@ -596,21 +573,10 @@ function handleHint() {
 
   const answersForLevel = game.answersForLevel(answer_list, game_level);
   const nextChar = tile_mgr.nextChar(answersForLevel);
-
-  console.log('next char', nextChar);
   if (nextChar !== '') {
     --hints;
     updateGameStorage({ hints: hints });
   }
-  /*
-  const nextCharIndex = tile_mgr.getIndexFromChar(nextChar);
-  if (nextCharIndex > -1 && tile_mgr.atIndex(nextCharIndex)) {
-    tile_mgr.atIndex(nextCharIndex).hint();
-    --hints;
-    updateGameStorage({ hints: hints });
-    tile_mgr.select(nextCharIndex);
-  }
-  */
 }
 
 function handleShare() {
