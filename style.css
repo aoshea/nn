@@ -200,12 +200,12 @@ button[name='hint']::after {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   padding: 0.5rem;
-  font-size: var(--font-size-large);
   border-radius: 2px;
 }
 
-.result-row span {
+.result-row > span {
   padding: 0 0.25rem;
+  font-size: var(--font-size-large);
 }
 
 .result-row:nth-child(even) {

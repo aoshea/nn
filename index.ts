@@ -227,11 +227,10 @@ function updateGameStorage(obj) {
   const newData = {
     ...data,
     [gameKey]: {
-      ...game[gameKey],
+      ...game,
       ...obj,
     },
   };
-  console.log('save new data', newData);
   saveStorageData(newData);
 }
 
@@ -270,14 +269,18 @@ let savedTiles = fromGameStorage('tiles', []);
 let hints = fromGameStorage('hints', 3);
 
 // statistics
-let streak = fromGlobalStorage('streak', 0);
-let best_streak = fromGlobalStorage('all_time_streak', 0);
+let streakCount = fromGlobalStorage('streak', 0);
+let allTimeStreakCount = fromGlobalStorage('all_time_streak', 0);
+// let gameCount = fromGameStorage('games_played', 0);
 let today_score = '3/8';
-let today_hints = `${hints}/3`;
-let current_streak = `Current ${streak}`;
-let all_time_streak = `All-time ${best_streak}`;
-let total_played = '0';
 let game_result = `Zigga ${game_no} ${today_score}\n`;
+
+// statistic elements
+const statElements = {
+  currentStreak: document.getElementById('stat-current-streak'),
+  allTimeStreak: document.getElementById('stat-all-time-streak'),
+  dayRows: Array.from(document.querySelectorAll('.result-row')).slice(1),
+};
 
 // input char display
 const input_char_view = new InputView();
@@ -380,11 +383,35 @@ function buildGameResult(game_no, complete_count, max_chars = 8) {
 function updateStats() {
   const complete_count = tile_mgr.getCompleteCount();
 
+  /*
+  const day = Date.getDate();
+  console.log()
+
   const el = document.querySelector('.result-today');
   const score_el = el.querySelector('span + span');
   const percent_el = el.querySelector('span + span + span');
   score_el.textContent = `${complete_count}/${max_chars}`;
   percent_el.textContent = `${(complete_count / max_chars) * 100}%`;
+  */
+
+  const day = new Date(Date.now()).getDay();
+  
+  const maxDays = 6;
+  let offsetDay = day - 1;
+  offsetDay = offsetDay < 0 ? maxDays : offsetDay % maxDays;
+  const options = { weekday: "short" };
+  const dayText = new Intl.DateTimeFormat("en-US", options).format(Date.now());
+  console.log('day text', dayText);
+  const dayRowEl = statElements.dayRows[offsetDay];
+  const dayLabelEl = dayRowEl.querySelector('span');
+  dayLabelEl.textContent = dayText;
+  const score_el = dayRowEl.querySelector('span + span');
+  const percent_el = dayRowEl.querySelector('span + span + span');
+  score_el.textContent = `${complete_count}/${max_chars}`;
+  percent_el.textContent = `${(complete_count / max_chars) * 100}%`;
+
+  statElements.currentStreak = streakCount;
+  statElements.allTimeStreak = allTimeStreakCount;
 
   /*
 
@@ -537,7 +564,11 @@ function advanceLevel() {
     tile_mgr.show(game_level);
     input_char_view.reset(game_level + min_chars);
   } else {
-    //tile_mgr.endGame();
+    // if previous day was a win, add to current streak,
+    // otherwise streak is 1
+    // if current streak greater than all time streak,
+    // update all time streak
+
     setTimeout(toggleStats, 3000);
   }
 
